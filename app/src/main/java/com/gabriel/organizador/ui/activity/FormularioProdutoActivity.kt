@@ -1,5 +1,6 @@
 package com.gabriel.organizador.ui.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -31,8 +32,11 @@ class FormularioProdutoActivity : AppCompatActivity(R.layout.activity_formulario
                 descricao = descricao,
                 valor = valor
             )
-
             Log.i("FormulariProduto","onCreate: $produtoNovo")
+
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+
         }
 
 

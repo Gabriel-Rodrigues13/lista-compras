@@ -1,11 +1,13 @@
 package com.gabriel.organizador.ui.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import com.gabriel.organizador.R
 import com.gabriel.organizador.model.Produto
 import com.gabriel.organizador.ui.adapter.ListaProdutosAdapter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.math.BigDecimal
 
 class MainActivity : AppCompatActivity() {
@@ -27,5 +29,11 @@ class MainActivity : AppCompatActivity() {
                 valor = BigDecimal("39.99")
             ),
         ))
+        val fab = findViewById<FloatingActionButton>(R.id.floatingActionButton)
+        fab.setOnClickListener {
+            val intent = Intent(this, FormularioProdutoActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 }
