@@ -2,13 +2,14 @@ package com.gabriel.organizador.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import com.gabriel.organizador.R
 import com.gabriel.organizador.model.Produto
 import java.math.BigDecimal
 
-class FormularioProdutoActivity : AppCompatActivity(R.layout.activity_formulario_produto2) {
+class FormularioProdutoActivity : AppCompatActivity(R.layout.activity_formulario_produto) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val botaoSalvar = findViewById<Button>(R.id.botao_salvar)
@@ -30,6 +31,8 @@ class FormularioProdutoActivity : AppCompatActivity(R.layout.activity_formulario
                 descricao = descricao,
                 valor = valor
             )
+
+            Log.i("FormulariProduto","onCreate: $produtoNovo")
         }
 
 
