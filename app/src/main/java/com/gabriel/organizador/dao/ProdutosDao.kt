@@ -1,6 +1,7 @@
 package com.gabriel.organizador.dao
 
 import com.gabriel.organizador.model.Produto
+import java.math.BigDecimal
 
 class ProdutosDao {
     fun adiciona(produto : Produto){
@@ -11,6 +12,11 @@ class ProdutosDao {
     }
 
     companion object {
-        private val produtos = mutableListOf<Produto>()
+        private val produtos = mutableListOf<Produto>(
+            Produto(nome = "Banana",
+            descricao = "Banana prata",
+            valor = BigDecimal(10.00)
+            )
+        )
     }
 }
