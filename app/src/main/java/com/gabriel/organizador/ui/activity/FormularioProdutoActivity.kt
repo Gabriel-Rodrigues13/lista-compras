@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import com.gabriel.organizador.R
+import com.gabriel.organizador.dao.ProdutosDao
 import com.gabriel.organizador.model.Produto
 import java.math.BigDecimal
 
@@ -34,9 +35,10 @@ class FormularioProdutoActivity : AppCompatActivity(R.layout.activity_formulario
             )
             Log.i("FormulariProduto","onCreate: $produtoNovo")
 
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-
+            val dao = ProdutosDao()
+            dao.adiciona(produtoNovo)
+            Log.i("FormulariProduto","onCreate: ${dao.buscaTodos()}")
+            finish()
         }
 
 
