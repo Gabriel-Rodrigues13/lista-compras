@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.gabriel.organizador.R
+import com.gabriel.organizador.databinding.ProdutoItemBinding
 
 import com.gabriel.organizador.model.Produto
 
@@ -16,20 +17,20 @@ class ListaProdutosAdapter(
 ): RecyclerView.Adapter<ListaProdutosAdapter.ViewHolder>(){
     private val produtos = produtos.toMutableList()
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
+    class ViewHolder(binding: ProdutoItemBinding) : RecyclerView.ViewHolder(binding.root){
+        private val nome = binding.nome
+        private val descricao = binding.descricao
+        private val valor = binding.valor
         fun vincula(produto : Produto){
-            val nome = itemView.findViewById<TextView>(R.id.nome)
             nome.text = produto.nome
-            val descricao = itemView.findViewById<TextView>(R.id.descricao)
             descricao.text = produto.descricao
-            val valor = itemView.findViewById<TextView>(R.id.valor)
             valor.text = produto.valor.toPlainString()
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.produto_item, parent, false)
-        return ViewHolder(view)
+        val binding = ProdutoItemBinding.inflate(LayoutInflater.from(context), parent,false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
