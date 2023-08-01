@@ -11,49 +11,70 @@
         android:layout_height="wrap_content"
         tools:context=".ui.activity.FormularioProdutoActivity">
 
-        <EditText
-            android:id="@+id/nome"
+
+        <ImageView
+            android:id="@+id/imagem_formulario"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:hint="Nome"
-            android:inputType="text"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/produto_1" />
 
-        <EditText
-            android:id="@+id/descricao"
-            android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textfield_nome"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Descrição"
-            android:inputType="text"
-            app:layout_constraintEnd_toEndOf="@id/nome"
-            app:layout_constraintStart_toStartOf="@id/nome"
-            app:layout_constraintTop_toBottomOf="@id/nome" />
+            android:hint="Nome"
+            app:layout_constraintTop_toBottomOf="@+id/imagem_formulario">
 
-        <EditText
-            android:id="@+id/valor"
-            android:layout_width="0dp"
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textfield_descricao"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Valor"
-            android:inputType="numberDecimal"
-            app:layout_constraintEnd_toEndOf="@id/descricao"
-            app:layout_constraintStart_toStartOf="@id/descricao"
-            app:layout_constraintTop_toBottomOf="@id/descricao"
-            />
+            android:hint="descricao"
+            app:layout_constraintTop_toBottomOf="@+id/textfield_nome">
 
-        <Button android:id="@+id/botao_salvar"
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textfield_valor"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="valor"
+            app:layout_constraintTop_toBottomOf="@+id/textfield_descricao">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <Button
+            android:id="@+id/botao_salvar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:text="Salvar"
-            app:layout_constraintVertical_bias="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/valor"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/textfield_valor"
+            app:layout_constraintVertical_bias="1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
