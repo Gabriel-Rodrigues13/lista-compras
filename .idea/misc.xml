@@ -6,8 +6,9 @@
         <entry key="../../../../../layout/custom_preview.xml" value="0.1852355072463768" />
         <entry key="app/src/main/res/font/montserrat.xml" value="0.28425925925925927" />
         <entry key="app/src/main/res/layout/activity_formulario_produto.xml" value="0.259375" />
+        <entry key="app/src/main/res/layout/activity_lista_produtos_activity.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/produto_item.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/produto_item.xml" value="0.18" />
       </map>
     </option>
   </component>
@@ -16,5 +17,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.18" />
+      </ProjectState>
+    </option>
   </component>
 </project>
