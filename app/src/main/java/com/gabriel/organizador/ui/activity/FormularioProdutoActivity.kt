@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import com.gabriel.organizador.R
 import com.gabriel.organizador.dao.ProdutosDao
 import com.gabriel.organizador.databinding.ActivityFormularioProdutoBinding
@@ -12,7 +13,7 @@ import java.math.BigDecimal
 
 class FormularioProdutoActivity : AppCompatActivity() {
 
-    private val binding by lazy{
+    private val binding by lazy {
         ActivityFormularioProdutoBinding.inflate(layoutInflater)
     }
 
@@ -20,6 +21,13 @@ class FormularioProdutoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         configuraBotaoSalvar()
         setContentView(binding.root)
+        binding.imagemFormulario.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setView(R.layout.formulario_imagem)
+                .setPositiveButton("Confirma") { _, _ -> }
+                .setNegativeButton("Cancela") { _, _ -> }
+                .show()
+        }
     }
 
     private fun configuraBotaoSalvar() {
@@ -31,7 +39,7 @@ class FormularioProdutoActivity : AppCompatActivity() {
             finish()
         }
     }
-    
+
     private fun criaProduto(): Produto {
         val campoNome = binding.nome
         val nome = campoNome.text.toString()
