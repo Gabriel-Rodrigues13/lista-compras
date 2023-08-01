@@ -2,12 +2,15 @@ package com.gabriel.organizador.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import coil.load
 import com.gabriel.organizador.R
 import com.gabriel.organizador.dao.ProdutosDao
 import com.gabriel.organizador.databinding.ActivityFormularioProdutoBinding
+import com.gabriel.organizador.databinding.FormularioImagemBinding
 import com.gabriel.organizador.model.Produto
 import java.math.BigDecimal
 
@@ -16,15 +19,26 @@ class FormularioProdutoActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityFormularioProdutoBinding.inflate(layoutInflater)
     }
-
+    private var url : String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         configuraBotaoSalvar()
         setContentView(binding.root)
         binding.imagemFormulario.setOnClickListener {
+
+            val bindingImagemDialog = FormularioImagemBinding.inflate(layoutInflater)
+            bindingImagemDialog.formularioImagemBotaoCarregar.setOnClickListener {
+                url = bindingImagemDialog.formularioImagemUrl.text.toString()
+                bindingImagemDialog.formularioImagemImageview.load(url)
+
+            }
+
+
             AlertDialog.Builder(this)
-                .setView(R.layout.formulario_imagem)
-                .setPositiveButton("Confirma") { _, _ -> }
+                .setView(bindingImagemDialog.root)
+                .setPositiveButton("Confirma") { _, _ ->
+                    binding.imagemFormulario.load(url)
+                }
                 .setNegativeButton("Cancela") { _, _ -> }
                 .show()
         }
@@ -56,7 +70,8 @@ class FormularioProdutoActivity : AppCompatActivity() {
         return Produto(
             nome = nome,
             descricao = descricao,
-            valor = valor
+            valor = valor,
+            imagem = url
         )
     }
 }

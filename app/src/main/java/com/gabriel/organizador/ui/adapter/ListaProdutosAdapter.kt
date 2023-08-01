@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.gabriel.organizador.databinding.ProdutoItemBinding
 
 import com.gabriel.organizador.model.Produto
@@ -16,15 +17,18 @@ class ListaProdutosAdapter(
 ) : RecyclerView.Adapter<ListaProdutosAdapter.ViewHolder>() {
     private val produtos = produtos.toMutableList()
 
-    class ViewHolder(binding: ProdutoItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        private val nome = binding.nome
-        private val descricao = binding.descricao
-        private val valor = binding.valor
+    class ViewHolder(private val binding: ProdutoItemBinding) : RecyclerView.ViewHolder(binding.root) {
+
         fun vincula(produto: Produto) {
+            val nome = binding.nome
+            val descricao = binding.descricao
+            val valor = binding.valor
             val valorEmMoeda = formataParaMoedaReal(produto)
             nome.text = produto.nome
             descricao.text = produto.descricao
             valor.text = valorEmMoeda
+            binding.imageView.load(produto.imagem)
+
         }
 
         private fun formataParaMoedaReal(produto: Produto): String? {
