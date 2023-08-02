@@ -11,6 +11,7 @@ import com.gabriel.organizador.R
 import com.gabriel.organizador.dao.ProdutosDao
 import com.gabriel.organizador.databinding.ActivityFormularioProdutoBinding
 import com.gabriel.organizador.databinding.FormularioImagemBinding
+import com.gabriel.organizador.extensions.tentaCarregarImagem
 import com.gabriel.organizador.model.Produto
 import java.math.BigDecimal
 
@@ -29,7 +30,7 @@ class FormularioProdutoActivity : AppCompatActivity() {
             val bindingImagemDialog = FormularioImagemBinding.inflate(layoutInflater)
             bindingImagemDialog.formularioImagemBotaoCarregar.setOnClickListener {
                 url = bindingImagemDialog.formularioImagemUrl.text.toString()
-                bindingImagemDialog.formularioImagemImageview.load(url)
+                bindingImagemDialog.formularioImagemImageview.tentaCarregarImagem(url)
 
             }
 

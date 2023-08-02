@@ -2,10 +2,13 @@ package com.gabriel.organizador.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.gabriel.organizador.R
 import com.gabriel.organizador.databinding.ProdutoItemBinding
+import com.gabriel.organizador.extensions.tentaCarregarImagem
 
 import com.gabriel.organizador.model.Produto
 import java.text.NumberFormat
@@ -27,7 +30,16 @@ class ListaProdutosAdapter(
             nome.text = produto.nome
             descricao.text = produto.descricao
             valor.text = valorEmMoeda
-            binding.imageView.load(produto.imagem)
+
+            val visibilidade = if(produto.imagem != null){
+               View.VISIBLE
+            }else{
+                View.GONE
+            }
+
+             binding.imageView.visibility = visibilidade
+
+            binding.imageView.tentaCarregarImagem(produto.imagem)
 
         }
 
