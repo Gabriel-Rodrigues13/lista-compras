@@ -13,6 +13,7 @@ import com.gabriel.organizador.databinding.ActivityFormularioProdutoBinding
 import com.gabriel.organizador.databinding.FormularioImagemBinding
 import com.gabriel.organizador.extensions.tentaCarregarImagem
 import com.gabriel.organizador.model.Produto
+import com.gabriel.organizador.ui.dialog.FormularioImagemDialog
 import java.math.BigDecimal
 
 class FormularioProdutoActivity : AppCompatActivity() {
@@ -20,28 +21,17 @@ class FormularioProdutoActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityFormularioProdutoBinding.inflate(layoutInflater)
     }
-    private var url : String? = null
+    private var url: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        title = "Cadastrar Produto"
         configuraBotaoSalvar()
         setContentView(binding.root)
         binding.imagemFormulario.setOnClickListener {
-
-            val bindingImagemDialog = FormularioImagemBinding.inflate(layoutInflater)
-            bindingImagemDialog.formularioImagemBotaoCarregar.setOnClickListener {
-                url = bindingImagemDialog.formularioImagemUrl.text.toString()
-                bindingImagemDialog.formularioImagemImageview.tentaCarregarImagem(url)
-
+            FormularioImagemDialog(this).mostra(url) { imagem ->
+                url = imagem
+                binding.imagemFormulario.tentaCarregarImagem(url)
             }
-
-
-            AlertDialog.Builder(this)
-                .setView(bindingImagemDialog.root)
-                .setPositiveButton("Confirma") { _, _ ->
-                    binding.imagemFormulario.load(url)
-                }
-                .setNegativeButton("Cancela") { _, _ -> }
-                .show()
         }
     }
 
