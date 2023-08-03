@@ -3,10 +3,10 @@ package com.gabriel.organizador.ui.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
-import com.gabriel.organizador.R
+import android.util.Log
 import com.gabriel.organizador.dao.ProdutosDao
 import com.gabriel.organizador.databinding.ActivityListaProdutosActivityBinding
+import com.gabriel.organizador.model.Produto
 import com.gabriel.organizador.ui.adapter.ListaProdutosAdapter
 
 
@@ -43,5 +43,11 @@ class ListaProdutosActivity : AppCompatActivity() {
     private fun configuraRecyclerView() {
         val recyclerView = binding.recyclerView
         recyclerView.adapter = adapter
+        adapter.quandoClicaNoItemListener = {
+            val intent =
+                Intent(this, DetalhesProdutosActivity::class.java).apply { putExtra(CHAVE_PRODUTO, it) }
+            startActivity(intent)
+        }
+
     }
 }

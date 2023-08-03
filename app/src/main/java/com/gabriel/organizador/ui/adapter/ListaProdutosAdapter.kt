@@ -1,12 +1,11 @@
 package com.gabriel.organizador.ui.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
-import com.gabriel.organizador.R
 import com.gabriel.organizador.databinding.ProdutoItemBinding
 import com.gabriel.organizador.extensions.tentaCarregarImagem
 
@@ -16,13 +15,28 @@ import java.util.*
 
 class ListaProdutosAdapter(
     private val context: Context,
-    produtos: List<Produto>
+    produtos: List<Produto>,
+    var quandoClicaNoItemListener: (produto: Produto) -> Unit = {}
 ) : RecyclerView.Adapter<ListaProdutosAdapter.ViewHolder>() {
     private val produtos = produtos.toMutableList()
 
-    class ViewHolder(private val binding: ProdutoItemBinding) : RecyclerView.ViewHolder(binding.root) {
+
+    inner class ViewHolder(private val binding: ProdutoItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        private lateinit var produto: Produto
+
+        init {
+            itemView.setOnClickListener {
+                Log.i("ListaProdutoAdapter", "Clicando no item")
+                if (::produto.isInitialized) {
+                    quandoClicaNoItemListener(produto)
+                }
+            }
+        }
 
         fun vincula(produto: Produto) {
+            this.produto = produto
             val nome = binding.nome
             val descricao = binding.descricao
             val valor = binding.valor
@@ -31,13 +45,13 @@ class ListaProdutosAdapter(
             descricao.text = produto.descricao
             valor.text = valorEmMoeda
 
-            val visibilidade = if(produto.imagem != null){
-               View.VISIBLE
-            }else{
+            val visibilidade = if (produto.imagem != null) {
+                View.VISIBLE
+            } else {
                 View.GONE
             }
 
-             binding.imageView.visibility = visibilidade
+            binding.imageView.visibility = visibilidade
 
             binding.imageView.tentaCarregarImagem(produto.imagem)
 
