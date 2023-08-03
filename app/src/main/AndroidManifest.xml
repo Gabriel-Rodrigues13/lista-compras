@@ -31,7 +31,7 @@
         </activity>
         <activity
             android:name=".ui.activity.DetalhesProdutosActivity"
-            android:exported="true">
+            android:theme="@style/Theme.Orgs.NoActionBar">
         </activity>
 
         <meta-data
