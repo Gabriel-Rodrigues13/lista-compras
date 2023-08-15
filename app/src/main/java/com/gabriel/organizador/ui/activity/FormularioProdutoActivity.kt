@@ -1,5 +1,6 @@
 package com.gabriel.organizador.ui.activity
 
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.gabriel.organizador.database.AppDatabase
@@ -14,6 +15,8 @@ class FormularioProdutoActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityFormularioProdutoBinding.inflate(layoutInflater)
     }
+
+    private var idProduto = 0L
     private var url: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +29,29 @@ class FormularioProdutoActivity : AppCompatActivity() {
                 binding.imagemFormulario.tentaCarregarImagem(url)
             }
         }
+
+        tentaCarregarProduto()
+
+    }
+
+    private fun tentaCarregarProduto() {
+        //verificação de versão do compilador do SDK
+        val userData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            //método novo para os SDK mais novos
+            intent.getParcelableExtra(CHAVE_PRODUTO, Produto::class.java)
+        } else {
+            //método deprecated  para os SDK mais antigos
+            intent.getParcelableExtra<Produto>(CHAVE_PRODUTO)
+        }
+        userData?.let { produtoCarregado ->
+            url = produtoCarregado.imagem
+            title = "Alterar Produto"
+            idProduto = produtoCarregado.id
+            binding.imagemFormulario.tentaCarregarImagem(produtoCarregado.imagem)
+            binding.nome.setText(produtoCarregado.nome)
+            binding.descricao.setText(produtoCarregado.descricao)
+            binding.valor.setText(produtoCarregado.valor.toPlainString())
+        }
     }
 
     private fun configuraBotaoSalvar() {
@@ -35,7 +61,11 @@ class FormularioProdutoActivity : AppCompatActivity() {
         val produtosDao = db.produtoDao()
         botaoSalvar.setOnClickListener {
             val produtoNovo = criaProduto()
+            if(idProduto > 0){
+                produtosDao.atualiza(produtoNovo)
+            }else{
             produtosDao.salvar(produtoNovo)
+            }
             finish()
         }
     }
@@ -54,6 +84,7 @@ class FormularioProdutoActivity : AppCompatActivity() {
         }
 
         return Produto(
+            id = idProduto,
             nome = nome,
             descricao = descricao,
             valor = valor,
