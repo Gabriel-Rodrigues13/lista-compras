@@ -2,10 +2,10 @@ package com.gabriel.organizador.ui.adapter
 
 import android.content.Context
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
+import com.gabriel.organizador.R
 import com.gabriel.organizador.databinding.ProdutoItemBinding
 import com.gabriel.organizador.extensions.tentaCarregarImagem
 
@@ -16,22 +16,58 @@ import java.util.*
 class ListaProdutosAdapter(
     private val context: Context,
     produtos: List<Produto> = emptyList(),
-    var quandoClicaNoItemListener: (produto: Produto) -> Unit = {}
+    var quandoClicaNoItemListener: (produto: Produto) -> Unit = {},
+    var quandoClicaEmRemover : (produto : Produto) -> Unit = {},
+    var quandoClicaEmEditar : (produto : Produto) -> Unit = {}
 ) : RecyclerView.Adapter<ListaProdutosAdapter.ViewHolder>() {
     private val produtos = produtos.toMutableList()
 
 
     inner class ViewHolder(private val binding: ProdutoItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root), PopupMenu.OnMenuItemClickListener {
 
         private lateinit var produto: Produto
 
         init {
+
+            itemView.setOnLongClickListener{
+                if(::produto.isInitialized){
+                    showPopup(it)
+                }
+                true
+            }
+
             itemView.setOnClickListener {
                 Log.i("ListaProdutoAdapter", "Clicando no item")
                 if (::produto.isInitialized) {
                     quandoClicaNoItemListener(produto)
                 }
+            }
+
+        }
+
+
+        override fun onMenuItemClick(item: MenuItem): Boolean {
+            return when (item.itemId) {
+                R.id.menu_detalhes_produto_editar -> {
+                    Log.i("PopUp", "onMenuItemClick: editar")
+                    quandoClicaEmEditar(produto)
+                    true
+                }
+                R.id.menu_detalhes_produto_remover -> {
+                    Log.i("PopUp", "onMenuItemClick: remover ")
+                    quandoClicaEmRemover(produto)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        fun showPopup(v: View) {
+            PopupMenu(context, v).apply {
+                inflate(R.menu.menu_detalhes_produto)
+                setOnMenuItemClickListener(this@ViewHolder)
+                show()
             }
         }
 

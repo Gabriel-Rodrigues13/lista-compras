@@ -2,6 +2,7 @@ package com.gabriel.organizador.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.gabriel.organizador.database.AppDatabase
 import com.gabriel.organizador.database.dao.ProdutoDao
@@ -56,6 +57,12 @@ class ListaProdutosActivity : AppCompatActivity() {
                     )
                 }
             startActivity(intent)
+        }
+        adapter.quandoClicaEmEditar = {
+            Log.i("PopUp", "configuraRecyclerView: popUp editar")
+        }
+        adapter.quandoClicaEmRemover = {
+            Log.i("PopUp", "configuraRecyclerView: popUp editar")
         }
 
     }
