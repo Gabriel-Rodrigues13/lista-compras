@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.1852355072463768" />
+        <entry key="app/src/main/res/drawable/ic_action_editar.xml" value="0.1925" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1925" />
         <entry key="app/src/main/res/font/montserrat.xml" value="0.28425925925925927" />
         <entry key="app/src/main/res/layout/activity_detalhes_produto.xml" value="0.2857142857142857" />
@@ -13,6 +14,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/formulario_imagem.xml" value="0.25" />
         <entry key="app/src/main/res/layout/produto_item.xml" value="0.18" />
+        <entry key="app/src/main/res/menu/menu_detalhes_produto.xml" value="0.33" />
       </map>
     </option>
   </component>
