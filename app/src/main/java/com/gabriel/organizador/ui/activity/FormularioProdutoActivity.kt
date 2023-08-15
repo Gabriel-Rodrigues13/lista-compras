@@ -1,16 +1,9 @@
 package com.gabriel.organizador.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
-import coil.load
-import com.gabriel.organizador.R
-import com.gabriel.organizador.dao.ProdutosDao
+import androidx.appcompat.app.AppCompatActivity
+import com.gabriel.organizador.database.AppDatabase
 import com.gabriel.organizador.databinding.ActivityFormularioProdutoBinding
-import com.gabriel.organizador.databinding.FormularioImagemBinding
 import com.gabriel.organizador.extensions.tentaCarregarImagem
 import com.gabriel.organizador.model.Produto
 import com.gabriel.organizador.ui.dialog.FormularioImagemDialog
@@ -37,10 +30,12 @@ class FormularioProdutoActivity : AppCompatActivity() {
 
     private fun configuraBotaoSalvar() {
         val botaoSalvar = binding.botaoSalvar
-        val dao = ProdutosDao()
+
+        val db = AppDatabase.instancia(this)
+        val produtosDao = db.produtoDao()
         botaoSalvar.setOnClickListener {
             val produtoNovo = criaProduto()
-            dao.adiciona(produtoNovo)
+            produtosDao.salvar(produtoNovo)
             finish()
         }
     }

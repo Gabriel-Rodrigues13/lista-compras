@@ -1,12 +1,11 @@
 package com.gabriel.organizador.ui.activity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import com.gabriel.organizador.dao.ProdutosDao
+import androidx.appcompat.app.AppCompatActivity
+import com.gabriel.organizador.database.AppDatabase
+import com.gabriel.organizador.database.dao.ProdutoDao
 import com.gabriel.organizador.databinding.ActivityListaProdutosActivityBinding
-import com.gabriel.organizador.model.Produto
 import com.gabriel.organizador.ui.adapter.ListaProdutosAdapter
 
 
@@ -14,9 +13,9 @@ class ListaProdutosActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityListaProdutosActivityBinding.inflate(layoutInflater)
     }
-    private val dao = ProdutosDao()
+
     private val adapter = ListaProdutosAdapter(
-        context = this, produtos = dao.buscaTodos()
+        context = this
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,8 +27,13 @@ class ListaProdutosActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
+
+        val db = AppDatabase.instancia(this)
+
+        val produtosDao = db.produtoDao()
+
+        adapter.atualiza(produtosDao.buscaTodos())
         super.onResume()
-        adapter.atualiza(dao.buscaTodos())
     }
 
     private fun configuraFab() {
@@ -45,7 +49,12 @@ class ListaProdutosActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         adapter.quandoClicaNoItemListener = {
             val intent =
-                Intent(this, DetalhesProdutosActivity::class.java).apply { putExtra(CHAVE_PRODUTO, it) }
+                Intent(this, DetalhesProdutosActivity::class.java).apply {
+                    putExtra(
+                        CHAVE_PRODUTO,
+                        it
+                    )
+                }
             startActivity(intent)
         }
 
