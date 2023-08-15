@@ -8,7 +8,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import androidx.room.Database
 import com.gabriel.organizador.R
+import com.gabriel.organizador.database.AppDatabase
 import com.gabriel.organizador.databinding.ActivityDetalhesProdutoBinding
 import com.gabriel.organizador.extensions.formataParaMoedaBrasileira
 import com.gabriel.organizador.extensions.tentaCarregarImagem
@@ -18,6 +20,8 @@ import com.gabriel.organizador.ui.adapter.ListaProdutosAdapter
 private const val TAG = "Detalhes menu"
 
 class DetalhesProdutosActivity : AppCompatActivity() {
+
+    private lateinit var produto: Produto
 
     private val binding by lazy {
         ActivityDetalhesProdutoBinding.inflate(layoutInflater)
@@ -35,13 +39,19 @@ class DetalhesProdutosActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_detalhes_produto_editar -> {
-                Log.i(TAG, "onOptionsItemSelected: editar")
-            }
 
-            R.id.menu_detalhes_produto_remover -> {
-                Log.i(TAG, "onOptionsItemSelected: remover")
+        if (::produto.isInitialized) {
+            val db = AppDatabase.instancia(this)
+            val produtoDao = db.produtoDao()
+            when (item.itemId) {
+                R.id.menu_detalhes_produto_editar -> {
+                    Log.i(TAG, "onOptionsItemSelected: editar")
+                }
+
+                R.id.menu_detalhes_produto_remover -> {
+                    produtoDao.delete(produto)
+                    finish()
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -58,6 +68,7 @@ class DetalhesProdutosActivity : AppCompatActivity() {
         }
         userData?.let { produtoCarregado ->
             preencheDados(produtoCarregado)
+            produto = produtoCarregado
         } ?: finish()
     }
 
