@@ -17,6 +17,11 @@ import com.gabriel.organizador.extensions.formataParaMoedaBrasileira
 import com.gabriel.organizador.extensions.tentaCarregarImagem
 import com.gabriel.organizador.model.Produto
 import com.gabriel.organizador.ui.adapter.ListaProdutosAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAG = "Detalhes menu"
 
@@ -33,6 +38,7 @@ class DetalhesProdutosActivity : AppCompatActivity() {
         AppDatabase.instancia(this).produtoDao()
 
     }
+    private val scope = CoroutineScope(IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,10 +52,14 @@ class DetalhesProdutosActivity : AppCompatActivity() {
     }
 
     private fun buscaProduto() {
-        produto = produtoDao.buscaPorId(produtoId)
-        produto?.let {
-            preencheDados(it)
-        } ?: finish()
+        scope.launch {
+            produto = produtoDao.buscaPorId(produtoId)
+            withContext(Dispatchers.Main){
+                produto?.let {
+                    preencheDados(it)
+                } ?: finish()
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -69,12 +79,13 @@ class DetalhesProdutosActivity : AppCompatActivity() {
                         startActivity(this)
                     }
                 }
-
                 R.id.menu_detalhes_produto_remover -> {
-                    produto?.let {
-                        produtoDao.delete(it)
+                    scope.launch {
+                        produto?.let {
+                            produtoDao.delete(it)
+                        }
+                        finish()
                     }
-                    finish()
                 }
             }
         }

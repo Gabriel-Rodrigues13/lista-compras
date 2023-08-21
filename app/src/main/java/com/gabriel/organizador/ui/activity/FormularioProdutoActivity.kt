@@ -7,18 +7,20 @@ import com.gabriel.organizador.databinding.ActivityFormularioProdutoBinding
 import com.gabriel.organizador.extensions.tentaCarregarImagem
 import com.gabriel.organizador.model.Produto
 import com.gabriel.organizador.ui.dialog.FormularioImagemDialog
+import kotlinx.coroutines.*
 import java.math.BigDecimal
+
 class FormularioProdutoActivity : AppCompatActivity() {
 
     private val binding by lazy {
         ActivityFormularioProdutoBinding.inflate(layoutInflater)
     }
-    private val produtosDao by lazy{
+    private val produtosDao by lazy {
         val db = AppDatabase.instancia(this)
         db.produtoDao()
     }
 
-
+    private val scope = CoroutineScope(Dispatchers.IO)
     private var produtoId = 0L
     private var url: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,22 +41,25 @@ class FormularioProdutoActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        produtosDao.buscaPorId(produtoId)?.let {
-            tentaBuscarProduto(it)
-        }
-
+        tentaBuscarProduto()
     }
 
-    private fun tentaBuscarProduto(it: Produto) {
-        title = "Alterar Produto"
-        preencheCampos(it)
+    private fun tentaBuscarProduto() {
+
+        scope.launch {
+            produtosDao.buscaPorId(produtoId)?.let {
+                withContext(Dispatchers.Main) {
+                    title = "Alterar Produto"
+                    preencheCampos(it)
+                }
+            }
+        }
     }
 
     private fun tentaCarregarProduto() {
         produtoId = intent.getLongExtra(CHAVE_PRODUTO_ID, 0L)
 
-        }
-
+    }
 
 
     private fun preencheCampos(produto: Produto) {
@@ -69,16 +74,12 @@ class FormularioProdutoActivity : AppCompatActivity() {
     private fun configuraBotaoSalvar() {
         val botaoSalvar = binding.botaoSalvar
 
-
         botaoSalvar.setOnClickListener {
             val produtoNovo = criaProduto()
-//            if(produtoId > 0){
-//                produtosDao.atualiza(produtoNovo)
-//            }else{
-//            produtosDao.salvar(produtoNovo)
-//            }
-            produtosDao.salvar(produtoNovo)
-            finish()
+            scope.launch {
+                produtosDao.salvar(produtoNovo)
+                finish()
+            }
         }
     }
 

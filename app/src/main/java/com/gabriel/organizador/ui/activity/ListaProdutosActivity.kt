@@ -8,7 +8,9 @@ import com.gabriel.organizador.database.AppDatabase
 import com.gabriel.organizador.database.dao.ProdutoDao
 import com.gabriel.organizador.databinding.ActivityListaProdutosActivityBinding
 import com.gabriel.organizador.ui.adapter.ListaProdutosAdapter
+import kotlinx.coroutines.*
 
+private const val TAG = "ListaProdutos"
 
 class ListaProdutosActivity : AppCompatActivity() {
     private val binding by lazy {
@@ -28,13 +30,17 @@ class ListaProdutosActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-
-        val db = AppDatabase.instancia(this)
-
-        val produtosDao = db.produtoDao()
-
-        adapter.atualiza(produtosDao.buscaTodos())
         super.onResume()
+        val db = AppDatabase.instancia(this)
+        val produtosDao = db.produtoDao()
+        val scope = MainScope()
+        scope.launch {
+            val produtos = withContext(Dispatchers.IO) {
+                produtosDao.buscaTodos ()
+            }
+            adapter.atualiza(produtos)
+        }
+
     }
 
     private fun configuraFab() {
