@@ -11,6 +11,7 @@ import android.view.MenuItem
 import androidx.room.Database
 import com.gabriel.organizador.R
 import com.gabriel.organizador.database.AppDatabase
+import com.gabriel.organizador.database.dao.ProdutoDao
 import com.gabriel.organizador.databinding.ActivityDetalhesProdutoBinding
 import com.gabriel.organizador.extensions.formataParaMoedaBrasileira
 import com.gabriel.organizador.extensions.tentaCarregarImagem
@@ -21,16 +22,34 @@ private const val TAG = "Detalhes menu"
 
 class DetalhesProdutosActivity : AppCompatActivity() {
 
-    private lateinit var produto: Produto
+    private var produtoId: Long = 0L
+    private var produto: Produto? = null
 
     private val binding by lazy {
         ActivityDetalhesProdutoBinding.inflate(layoutInflater)
+    }
+
+    private val produtoDao by lazy {
+        AppDatabase.instancia(this).produtoDao()
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         tentaCarregarProduto()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        buscaProduto()
+    }
+
+    private fun buscaProduto() {
+        produto = produtoDao.buscaPorId(produtoId)
+        produto?.let {
+            preencheDados(it)
+        } ?: finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -40,20 +59,21 @@ class DetalhesProdutosActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        if (::produto.isInitialized) {
-            val db = AppDatabase.instancia(this)
-            val produtoDao = db.produtoDao()
+        if (produto != null) {
+
             when (item.itemId) {
                 R.id.menu_detalhes_produto_editar -> {
                     Log.i(TAG, "onOptionsItemSelected: editar")
                     val intent = Intent(this, FormularioProdutoActivity::class.java).apply {
-                        putExtra(CHAVE_PRODUTO, produto)
+                        putExtra(CHAVE_PRODUTO_ID, produtoId)
                         startActivity(this)
                     }
                 }
 
                 R.id.menu_detalhes_produto_remover -> {
-                    produtoDao.delete(produto)
+                    produto?.let {
+                        produtoDao.delete(it)
+                    }
                     finish()
                 }
             }
@@ -62,18 +82,7 @@ class DetalhesProdutosActivity : AppCompatActivity() {
     }
 
     private fun tentaCarregarProduto() {
-        //verificação de versão do compilador do SDK
-        val userData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            //método novo para os SDK mais novos
-            intent.getParcelableExtra(CHAVE_PRODUTO, Produto::class.java)
-        } else {
-            //método deprecated  para os SDK mais antigos
-            intent.getParcelableExtra<Produto>(CHAVE_PRODUTO)
-        }
-        userData?.let { produtoCarregado ->
-            preencheDados(produtoCarregado)
-            produto = produtoCarregado
-        } ?: finish()
+        produtoId = intent.getLongExtra(CHAVE_PRODUTO_ID, 0L)
     }
 
     private fun preencheDados(produtoEnviado: Produto) {

@@ -52,8 +52,8 @@ class ListaProdutosActivity : AppCompatActivity() {
             val intent =
                 Intent(this, DetalhesProdutosActivity::class.java).apply {
                     putExtra(
-                        CHAVE_PRODUTO,
-                        it
+                        CHAVE_PRODUTO_ID,
+                        it.id
                     )
                 }
             startActivity(intent)
