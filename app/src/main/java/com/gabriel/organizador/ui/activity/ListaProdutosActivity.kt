@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.lifecycleScope
 import com.gabriel.organizador.database.AppDatabase
 import com.gabriel.organizador.database.dao.ProdutoDao
 import com.gabriel.organizador.databinding.ActivityListaProdutosActivityBinding
@@ -22,7 +24,13 @@ class ListaProdutosActivity : AppCompatActivity() {
     private val adapter = ListaProdutosAdapter(
         context = this
     )
-    private val job = Job()
+
+
+    private val produtosDao by lazy {
+        val db = AppDatabase.instancia(this)
+        db.produtoDao()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,25 +42,15 @@ class ListaProdutosActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val db = AppDatabase.instancia(this)
-        val produtosDao = db.produtoDao()
-        val handler = CoroutineExceptionHandler { coroutineContext, throwable ->
-            Log.i(TAG, "onResume: trowable $throwable")
-            Toast.makeText(this@ListaProdutosActivity, "Ocorreu um problema", Toast.LENGTH_SHORT)
-                .show()
-        }
-
-
-
         val scope = MainScope()
-        val firstJob = scope.launch(job) {
+        lifecycleScope.launch() {
             repeat(1000) {
                 Log.i(TAG, "onResume: coroutine esta em execucao $it")
                 delay(1000)
             }
         }
 
-        scope.launch(handler) {
+        lifecycleScope.launch() {
             val produtos = withContext(Dispatchers.IO) {
                 produtosDao.buscaTodos()
             }
@@ -61,10 +59,6 @@ class ListaProdutosActivity : AppCompatActivity() {
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
 
     private fun configuraFab() {
         val fab = binding.extendedFab

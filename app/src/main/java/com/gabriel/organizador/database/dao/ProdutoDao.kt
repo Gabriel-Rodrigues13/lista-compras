@@ -7,15 +7,15 @@ import com.gabriel.organizador.model.Produto
 interface ProdutoDao {
 
     @Query("SELECT * FROM Produto")
-    fun buscaTodos(): List<Produto>
+    suspend fun buscaTodos(): List<Produto>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun salvar(vararg produto: Produto)
+    suspend fun salvar(vararg produto: Produto)
 
     @Delete
-    fun delete(vararg produto: Produto)
+    suspend fun delete(vararg produto: Produto)
 
     @Query("SELECT * FROM PRODUTO WHERE id = :id")
-    fun buscaPorId(id: Long): Produto
+    suspend fun buscaPorId(id: Long): Produto
 
 }

@@ -2,6 +2,7 @@ package com.gabriel.organizador.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.gabriel.organizador.database.AppDatabase
 import com.gabriel.organizador.databinding.ActivityFormularioProdutoBinding
 import com.gabriel.organizador.extensions.tentaCarregarImagem
@@ -20,7 +21,7 @@ class FormularioProdutoActivity : AppCompatActivity() {
         db.produtoDao()
     }
 
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = MainScope()
     private var produtoId = 0L
     private var url: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,12 +47,10 @@ class FormularioProdutoActivity : AppCompatActivity() {
 
     private fun tentaBuscarProduto() {
 
-        scope.launch {
+        lifecycleScope.launch {
             produtosDao.buscaPorId(produtoId)?.let {
-                withContext(Dispatchers.Main) {
-                    title = "Alterar Produto"
-                    preencheCampos(it)
-                }
+                title = "Alterar Produto"
+                preencheCampos(it)
             }
         }
     }
@@ -76,7 +75,7 @@ class FormularioProdutoActivity : AppCompatActivity() {
 
         botaoSalvar.setOnClickListener {
             val produtoNovo = criaProduto()
-            scope.launch {
+            lifecycleScope.launch {
                 produtosDao.salvar(produtoNovo)
                 finish()
             }

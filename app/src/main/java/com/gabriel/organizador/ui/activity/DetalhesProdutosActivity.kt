@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.lifecycleScope
 import androidx.room.Database
 import com.gabriel.organizador.R
 import com.gabriel.organizador.database.AppDatabase
@@ -52,13 +53,12 @@ class DetalhesProdutosActivity : AppCompatActivity() {
     }
 
     private fun buscaProduto() {
-        scope.launch {
+        lifecycleScope.launch {
             produto = produtoDao.buscaPorId(produtoId)
-            withContext(Dispatchers.Main){
-                produto?.let {
-                    preencheDados(it)
-                } ?: finish()
-            }
+            produto?.let {
+                preencheDados(it)
+            } ?: finish()
+
         }
     }
 
@@ -73,6 +73,7 @@ class DetalhesProdutosActivity : AppCompatActivity() {
 
             when (item.itemId) {
                 R.id.menu_detalhes_produto_editar -> {
+
                     Log.i(TAG, "onOptionsItemSelected: editar")
                     val intent = Intent(this, FormularioProdutoActivity::class.java).apply {
                         putExtra(CHAVE_PRODUTO_ID, produtoId)
@@ -80,7 +81,7 @@ class DetalhesProdutosActivity : AppCompatActivity() {
                     }
                 }
                 R.id.menu_detalhes_produto_remover -> {
-                    scope.launch {
+                    lifecycleScope.launch {
                         produto?.let {
                             produtoDao.delete(it)
                         }
