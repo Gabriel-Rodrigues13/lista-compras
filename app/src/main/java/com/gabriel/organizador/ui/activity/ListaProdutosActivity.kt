@@ -22,6 +22,7 @@ class ListaProdutosActivity : AppCompatActivity() {
     private val adapter = ListaProdutosAdapter(
         context = this
     )
+    private val job = Job()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +41,17 @@ class ListaProdutosActivity : AppCompatActivity() {
             Toast.makeText(this@ListaProdutosActivity, "Ocorreu um problema", Toast.LENGTH_SHORT)
                 .show()
         }
+
+
+
         val scope = MainScope()
+        val firstJob = scope.launch(job) {
+            repeat(1000) {
+                Log.i(TAG, "onResume: coroutine esta em execucao $it")
+                delay(1000)
+            }
+        }
+
         scope.launch(handler) {
             val produtos = withContext(Dispatchers.IO) {
                 produtosDao.buscaTodos()
@@ -48,6 +59,11 @@ class ListaProdutosActivity : AppCompatActivity() {
             adapter.atualiza(produtos)
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     private fun configuraFab() {
