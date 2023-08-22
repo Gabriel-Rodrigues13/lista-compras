@@ -3,12 +3,14 @@ package com.gabriel.organizador.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.gabriel.organizador.database.AppDatabase
 import com.gabriel.organizador.database.dao.ProdutoDao
 import com.gabriel.organizador.databinding.ActivityListaProdutosActivityBinding
 import com.gabriel.organizador.ui.adapter.ListaProdutosAdapter
 import kotlinx.coroutines.*
+import java.lang.IllegalArgumentException
 
 private const val TAG = "ListaProdutos"
 
@@ -33,10 +35,15 @@ class ListaProdutosActivity : AppCompatActivity() {
         super.onResume()
         val db = AppDatabase.instancia(this)
         val produtosDao = db.produtoDao()
+        val handler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            Log.i(TAG, "onResume: trowable $throwable")
+            Toast.makeText(this@ListaProdutosActivity, "Ocorreu um problema", Toast.LENGTH_SHORT)
+                .show()
+        }
         val scope = MainScope()
-        scope.launch {
+        scope.launch(handler) {
             val produtos = withContext(Dispatchers.IO) {
-                produtosDao.buscaTodos ()
+                produtosDao.buscaTodos()
             }
             adapter.atualiza(produtos)
         }
