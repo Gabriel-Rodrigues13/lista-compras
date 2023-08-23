@@ -2,12 +2,13 @@ package com.gabriel.organizador.database.dao
 
 import androidx.room.*
 import com.gabriel.organizador.model.Produto
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProdutoDao {
 
     @Query("SELECT * FROM Produto")
-    suspend fun buscaTodos(): List<Produto>
+    fun buscaTodos(): Flow<List<Produto>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun salvar(vararg produto: Produto)
@@ -16,6 +17,6 @@ interface ProdutoDao {
     suspend fun delete(vararg produto: Produto)
 
     @Query("SELECT * FROM PRODUTO WHERE id = :id")
-    suspend fun buscaPorId(id: Long): Produto
+    fun buscaPorId(id: Long): Flow<Produto?>
 
 }

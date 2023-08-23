@@ -12,6 +12,7 @@ import com.gabriel.organizador.database.dao.ProdutoDao
 import com.gabriel.organizador.databinding.ActivityListaProdutosActivityBinding
 import com.gabriel.organizador.ui.adapter.ListaProdutosAdapter
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import java.lang.IllegalArgumentException
 
 private const val TAG = "ListaProdutos"
@@ -37,27 +38,13 @@ class ListaProdutosActivity : AppCompatActivity() {
         setContentView(binding.root)
         configuraRecyclerView()
         configuraFab()
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val scope = MainScope()
         lifecycleScope.launch() {
-            repeat(1000) {
-                Log.i(TAG, "onResume: coroutine esta em execucao $it")
-                delay(1000)
+            produtosDao.buscaTodos().collect{produto ->
+                adapter.atualiza(produto)
             }
         }
-
-        lifecycleScope.launch() {
-            val produtos = withContext(Dispatchers.IO) {
-                produtosDao.buscaTodos()
-            }
-            adapter.atualiza(produtos)
-        }
-
     }
+
 
 
     private fun configuraFab() {

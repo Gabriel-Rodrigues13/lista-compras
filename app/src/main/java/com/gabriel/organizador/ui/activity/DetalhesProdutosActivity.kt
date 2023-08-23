@@ -21,6 +21,7 @@ import com.gabriel.organizador.ui.adapter.ListaProdutosAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -54,10 +55,12 @@ class DetalhesProdutosActivity : AppCompatActivity() {
 
     private fun buscaProduto() {
         lifecycleScope.launch {
-            produto = produtoDao.buscaPorId(produtoId)
-            produto?.let {
-                preencheDados(it)
-            } ?: finish()
+            produtoDao.buscaPorId(produtoId).collect(){produtoEncontrado ->
+                produto = produtoEncontrado
+                produto?.let {
+                    preencheDados(it)
+                }?: finish()
+            }
 
         }
     }

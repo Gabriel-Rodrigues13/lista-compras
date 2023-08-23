@@ -4,11 +4,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.gabriel.organizador.database.AppDatabase
+import com.gabriel.organizador.database.dao.ProdutoDao
 import com.gabriel.organizador.databinding.ActivityFormularioProdutoBinding
 import com.gabriel.organizador.extensions.tentaCarregarImagem
 import com.gabriel.organizador.model.Produto
 import com.gabriel.organizador.ui.dialog.FormularioImagemDialog
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import java.math.BigDecimal
 
 class FormularioProdutoActivity : AppCompatActivity() {
@@ -16,14 +19,14 @@ class FormularioProdutoActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityFormularioProdutoBinding.inflate(layoutInflater)
     }
-    private val produtosDao by lazy {
+    private val produtoDao: ProdutoDao by lazy {
         val db = AppDatabase.instancia(this)
         db.produtoDao()
     }
-
     private val scope = MainScope()
     private var produtoId = 0L
     private var url: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         title = "Cadastrar Produto"
@@ -35,25 +38,22 @@ class FormularioProdutoActivity : AppCompatActivity() {
                 binding.imagemFormulario.tentaCarregarImagem(url)
             }
         }
-
         tentaCarregarProduto()
-
-    }
-
-    override fun onResume() {
-        super.onResume()
         tentaBuscarProduto()
+
     }
 
     private fun tentaBuscarProduto() {
-
         lifecycleScope.launch {
-            produtosDao.buscaPorId(produtoId)?.let {
-                title = "Alterar Produto"
-                preencheCampos(it)
+            produtoDao.buscaPorId(produtoId).collect { produto ->
+                produto?.let {
+                    title = "Alterar Produto"
+                    preencheCampos(it)
+                }
             }
         }
     }
+
 
     private fun tentaCarregarProduto() {
         produtoId = intent.getLongExtra(CHAVE_PRODUTO_ID, 0L)
@@ -76,24 +76,16 @@ class FormularioProdutoActivity : AppCompatActivity() {
         botaoSalvar.setOnClickListener {
             val produtoNovo = criaProduto()
             lifecycleScope.launch {
-                produtosDao.salvar(produtoNovo)
+                produtoDao.salvar(produtoNovo)
                 finish()
             }
         }
     }
 
     private fun criaProduto(): Produto {
-        val campoNome = binding.nome
-        val nome = campoNome.text.toString()
-        val campoDescricao = binding.descricao
-        val descricao = campoDescricao.text.toString()
-        val campoValor = binding.valor
-        val valorTexto = campoValor.text.toString()
-        val valor = if (valorTexto.isBlank()) {
-            BigDecimal.ZERO
-        } else {
-            BigDecimal(valorTexto)
-        }
+        val nome = binding.nome.getTextValue()
+        val descricao = binding.descricao.getTextValue()
+        val valor = binding.valor.getBigDecimalValue()
 
         return Produto(
             id = produtoId,
@@ -103,5 +95,16 @@ class FormularioProdutoActivity : AppCompatActivity() {
             imagem = url
         )
     }
+
+    private fun TextInputEditText.getTextValue() = this.text.toString()
+
+    private fun TextInputEditText.getBigDecimalValue() = when(this.getTextValue().isBlank()){
+        true -> BigDecimal.ZERO
+        false -> BigDecimal(this.getTextValue())
+    }
+
+
+
+
 }
 
