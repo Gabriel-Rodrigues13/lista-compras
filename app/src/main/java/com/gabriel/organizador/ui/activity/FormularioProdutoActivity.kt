@@ -11,7 +11,6 @@ import com.gabriel.organizador.model.Produto
 import com.gabriel.organizador.ui.dialog.FormularioImagemDialog
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import java.math.BigDecimal
 
 class FormularioProdutoActivity : AppCompatActivity() {
@@ -74,7 +73,7 @@ class FormularioProdutoActivity : AppCompatActivity() {
         val botaoSalvar = binding.botaoSalvar
 
         botaoSalvar.setOnClickListener {
-            val produtoNovo = criaProduto()
+            val produtoNovo = pegaCamposECriaProduto()
             lifecycleScope.launch {
                 produtoDao.salvar(produtoNovo)
                 finish()
@@ -82,7 +81,7 @@ class FormularioProdutoActivity : AppCompatActivity() {
         }
     }
 
-    private fun criaProduto(): Produto {
+    private fun pegaCamposECriaProduto(): Produto {
         val nome = binding.nome.getTextValue()
         val descricao = binding.descricao.getTextValue()
         val valor = binding.valor.getBigDecimalValue()
