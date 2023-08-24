@@ -12,7 +12,7 @@ import com.gabriel.organizador.model.Produto
 import com.gabriel.organizador.model.Usuario
 
 
-@Database(entities = [Produto::class, Usuario::class], version = 1, exportSchema = true)
+@Database(entities = [Produto::class, Usuario::class], version = 2, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun produtoDao(): ProdutoDao
@@ -25,7 +25,7 @@ abstract class AppDatabase : RoomDatabase() {
                 context,
                 AppDatabase::class.java,
                 "orgs.db"
-            ).build().also {
+            ).fallbackToDestructiveMigration().build().also {
                 db = it
             }
         }
