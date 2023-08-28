@@ -3,19 +3,16 @@ package com.gabriel.organizador.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import com.gabriel.organizador.database.AppDatabase
-import com.gabriel.organizador.database.dao.ProdutoDao
+import com.gabriel.organizador.database.preferences.dataStore
+import com.gabriel.organizador.database.preferences.usuarioLogadoPreferences
 import com.gabriel.organizador.databinding.ActivityListaProdutosActivityBinding
 import com.gabriel.organizador.ui.adapter.ListaProdutosAdapter
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import java.lang.IllegalArgumentException
+import kotlinx.coroutines.launch
 
-private const val TAG = "ListaProdutos"
 
 class ListaProdutosActivity : AppCompatActivity() {
     private val binding by lazy {
@@ -43,20 +40,20 @@ class ListaProdutosActivity : AppCompatActivity() {
         configuraRecyclerView()
         configuraFab()
         lifecycleScope.launch() {
-            produtosDao.buscaTodos().collect{produto ->
-                adapter.atualiza(produto)
-                launch {
-                    intent.getStringExtra("CHAVE_USUARIO_ID")?.let {usuarioId ->
-                    usuarioDao.buscaPorId(usuarioId).collect(){
-                        Log.i("Lista de Produtos", "onCreate: $it")
-                    }
-
+            launch {
+                produtosDao.buscaTodos().collect { produto ->
+                    adapter.atualiza(produto)
+                }
+            }
+            dataStore.data.collect{preferences ->
+                preferences[usuarioLogadoPreferences]?.let {usuarioId->
+                    usuarioDao.buscaPorId(usuarioId).collect{
+                        Log.i("ListaProduto", "onCreate: $it")
                     }
                 }
             }
         }
     }
-
 
 
     private fun configuraFab() {

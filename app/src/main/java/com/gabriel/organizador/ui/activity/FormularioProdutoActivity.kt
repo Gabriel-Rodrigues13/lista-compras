@@ -1,16 +1,21 @@
 package com.gabriel.organizador.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.gabriel.organizador.database.AppDatabase
 import com.gabriel.organizador.database.dao.ProdutoDao
+import com.gabriel.organizador.database.dao.UsuarioDao
+import com.gabriel.organizador.database.preferences.dataStore
+import com.gabriel.organizador.database.preferences.usuarioLogadoPreferences
 import com.gabriel.organizador.databinding.ActivityFormularioProdutoBinding
 import com.gabriel.organizador.extensions.tentaCarregarImagem
 import com.gabriel.organizador.model.Produto
 import com.gabriel.organizador.ui.dialog.FormularioImagemDialog
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import java.math.BigDecimal
 
 class FormularioProdutoActivity : AppCompatActivity() {
@@ -22,6 +27,11 @@ class FormularioProdutoActivity : AppCompatActivity() {
         val db = AppDatabase.instancia(this)
         db.produtoDao()
     }
+
+    private val usuarioDao: UsuarioDao by lazy {
+        AppDatabase.instancia(this).usuarioDao()
+    }
+
     private val scope = MainScope()
     private var produtoId = 0L
     private var url: String? = null
@@ -55,7 +65,16 @@ class FormularioProdutoActivity : AppCompatActivity() {
 
 
     private fun tentaCarregarProduto() {
-        produtoId = intent.getLongExtra(CHAVE_PRODUTO_ID, 0L)
+        lifecycleScope.launch {
+            dataStore.data.collect { preferences ->
+                preferences[usuarioLogadoPreferences]?.let { usuarioId ->
+                    usuarioDao.buscaPorId(usuarioId).collect{
+                        Log.i("ListaProduto", "onCreate: $it ")
+                    }
+                }
+
+            }
+        }
 
     }
 
@@ -97,12 +116,10 @@ class FormularioProdutoActivity : AppCompatActivity() {
 
     private fun TextInputEditText.getTextValue() = this.text.toString()
 
-    private fun TextInputEditText.getBigDecimalValue() = when(this.getTextValue().isBlank()){
+    private fun TextInputEditText.getBigDecimalValue() = when (this.getTextValue().isBlank()) {
         true -> BigDecimal.ZERO
         false -> BigDecimal(this.getTextValue())
     }
-
-
 
 
 }
