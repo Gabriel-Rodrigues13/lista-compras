@@ -27,6 +27,10 @@ class ListaProdutosActivity : AppCompatActivity() {
     )
 
 
+    private val usuarioDao by lazy {
+        AppDatabase.instancia(this).usuarioDao()
+    }
+
     private val produtosDao by lazy {
         val db = AppDatabase.instancia(this)
         db.produtoDao()
@@ -41,6 +45,14 @@ class ListaProdutosActivity : AppCompatActivity() {
         lifecycleScope.launch() {
             produtosDao.buscaTodos().collect{produto ->
                 adapter.atualiza(produto)
+                launch {
+                    intent.getStringExtra("CHAVE_USUARIO_ID")?.let {usuarioId ->
+                    usuarioDao.buscaPorId(usuarioId).collect(){
+                        Log.i("Lista de Produtos", "onCreate: $it")
+                    }
+
+                    }
+                }
             }
         }
     }
