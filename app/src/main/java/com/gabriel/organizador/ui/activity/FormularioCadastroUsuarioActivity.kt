@@ -16,18 +16,18 @@ import kotlinx.coroutines.withContext
 
 class FormularioCadastroUsuarioActivity : AppCompatActivity() {
 
-    private val binding by lazy{
-        ActivityFormularioCadastroUsuarioBinding.inflate(layoutInflater)
-    }
-    private val dao by lazy{
-        AppDatabase.instancia(this).usuarioDao()
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         configuraBotaoCadastrar()
 
 
+    }
+    private val binding by lazy{
+        ActivityFormularioCadastroUsuarioBinding.inflate(layoutInflater)
+    }
+    private val dao by lazy{
+        AppDatabase.instancia(this).usuarioDao()
     }
 
     private fun configuraBotaoCadastrar(){
