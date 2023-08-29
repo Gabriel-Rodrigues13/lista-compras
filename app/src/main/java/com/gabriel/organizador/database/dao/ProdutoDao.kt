@@ -9,6 +9,8 @@ interface ProdutoDao {
 
     @Query("SELECT * FROM Produto")
     fun buscaTodos(): Flow<List<Produto>>
+    @Query("SELECT * FROM produto  WHERE usuarioId = :usuarioId")
+    fun buscaTodosProdutosDoUsuario(usuarioId : String) : Flow<List<Produto>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun salvar(vararg produto: Produto)

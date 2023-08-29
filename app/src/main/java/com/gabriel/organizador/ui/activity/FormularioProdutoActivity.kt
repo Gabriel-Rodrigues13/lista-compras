@@ -92,15 +92,17 @@ class FormularioProdutoActivity : UsuarioBaseActivity() {
         val botaoSalvar = binding.botaoSalvar
 
         botaoSalvar.setOnClickListener {
-            val produtoNovo = pegaCamposECriaProduto()
             lifecycleScope.launch {
-                produtoDao.salvar(produtoNovo)
+                usuario.value?.let { usuario ->
+                    val produtoNovo = pegaCamposECriaProduto(usuario.id)
+                    produtoDao.salvar(produtoNovo)
                 finish()
+                }
             }
         }
     }
 
-    private fun pegaCamposECriaProduto(): Produto {
+    private fun pegaCamposECriaProduto(usuarioId : String): Produto {
         val nome = binding.nome.getTextValue()
         val descricao = binding.descricao.getTextValue()
         val valor = binding.valor.getBigDecimalValue()
@@ -110,7 +112,9 @@ class FormularioProdutoActivity : UsuarioBaseActivity() {
             nome = nome,
             descricao = descricao,
             valor = valor,
-            imagem = url
+            imagem = url,
+            usuarioId = usuarioId
+
         )
     }
 

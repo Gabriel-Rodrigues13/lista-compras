@@ -11,5 +11,10 @@ val MIGRATION_1_2 = object : Migration(1,2){
             `nome` TEXT NOT NULL,
             `senha`TEXT NOT NULL, PRIMARY KEY (`id`))""")
     }
+}
+val MIGRATION_2_3 = object : Migration(2,3){
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE produto ADD COLUMN 'usuarioId' TEXT")
+    }
 
 }
