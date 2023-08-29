@@ -12,12 +12,13 @@ import com.gabriel.organizador.database.AppDatabase
 import com.gabriel.organizador.database.preferences.dataStore
 import com.gabriel.organizador.database.preferences.usuarioLogadoPreferences
 import com.gabriel.organizador.databinding.ActivityLoginBinding
+import com.gabriel.organizador.extensions.toast
 import com.gabriel.organizador.extensions.vaiPara
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
-    private val binding by lazy{
+    private val binding by lazy {
         ActivityLoginBinding.inflate(layoutInflater)
     }
     private val usuarioDao by lazy {
@@ -31,32 +32,36 @@ class LoginActivity : AppCompatActivity() {
         configuraBotaoCadastrarUsuario()
     }
 
-    private fun configuraBotaoEntrar(){
+    private fun configuraBotaoEntrar() {
         val botaoEntrar = binding.activityLoginBotaoEntrar
 
-        botaoEntrar.setOnClickListener{
+        botaoEntrar.setOnClickListener {
 
             val senha = binding.activityLoginSenha.text.toString()
             val usuario = binding.activityLoginUsuario.text.toString()
 
             lifecycleScope.launch {
-                Log.i("Variaveis", "configuraBotaoEntrar: $senha $usuario ")
-                usuarioDao.autentica(usuario, senha)?.let { usuario ->
-                    dataStore.edit { settings->
-                        settings[usuarioLogadoPreferences] = usuario.id
-                    }
-                    vaiPara(ListaProdutosActivity::class.java)
-                    finish()
-                }?:Toast.makeText(this@LoginActivity, "Falha na autenticação", Toast.LENGTH_SHORT).show()
+                autenticaUsuario(usuario, senha)
 
             }
 
         }
     }
-    private fun configuraBotaoCadastrarUsuario(){
+
+    private suspend fun autenticaUsuario(usuario: String, senha: String) {
+        usuarioDao.autentica(usuario, senha)?.let { usuarioCadastrado ->
+            dataStore.edit { settings ->
+                settings[usuarioLogadoPreferences] = usuarioCadastrado.id
+            }
+            vaiPara(ListaProdutosActivity::class.java)
+            finish()
+        } ?: toast("Falha na autenticação")
+    }
+
+    private fun configuraBotaoCadastrarUsuario() {
         val botaoCadastrar = binding.activityLoginBotaoCadastrar
-        botaoCadastrar.setOnClickListener{
-            val intent = Intent(this, FormularioCadastroUsuarioActivity::class.java )
+        botaoCadastrar.setOnClickListener {
+            val intent = Intent(this, FormularioCadastroUsuarioActivity::class.java)
             startActivity(intent)
         }
     }

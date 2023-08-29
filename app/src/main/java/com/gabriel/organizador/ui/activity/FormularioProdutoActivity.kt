@@ -16,9 +16,11 @@ import com.gabriel.organizador.ui.dialog.FormularioImagemDialog
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
 import java.math.BigDecimal
+import kotlin.math.log
 
-class FormularioProdutoActivity : AppCompatActivity() {
+class FormularioProdutoActivity : UsuarioBaseActivity() {
 
     private val binding by lazy {
         ActivityFormularioProdutoBinding.inflate(layoutInflater)
@@ -48,8 +50,17 @@ class FormularioProdutoActivity : AppCompatActivity() {
             }
         }
         tentaCarregarProduto()
-        tentaBuscarProduto()
+        lifecycleScope.launch {
+            usuario.filterNotNull().collect() {
+                Log.i("FormularioProduto", "onCreate: $it")
+            }
+        }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        tentaBuscarProduto()
     }
 
     private fun tentaBuscarProduto() {
@@ -63,19 +74,8 @@ class FormularioProdutoActivity : AppCompatActivity() {
         }
     }
 
-
     private fun tentaCarregarProduto() {
-        lifecycleScope.launch {
-            dataStore.data.collect { preferences ->
-                preferences[usuarioLogadoPreferences]?.let { usuarioId ->
-                    usuarioDao.buscaPorId(usuarioId).collect{
-                        Log.i("ListaProduto", "onCreate: $it ")
-                    }
-                }
-
-            }
-        }
-
+        produtoId = intent.getLongExtra(CHAVE_PRODUTO_ID, 0L)
     }
 
 

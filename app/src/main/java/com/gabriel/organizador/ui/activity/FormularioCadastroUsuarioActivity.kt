@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.gabriel.organizador.R
 import com.gabriel.organizador.database.AppDatabase
 import com.gabriel.organizador.databinding.ActivityFormularioCadastroUsuarioBinding
+import com.gabriel.organizador.extensions.toast
 import com.gabriel.organizador.model.Usuario
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,15 +35,19 @@ class FormularioCadastroUsuarioActivity : AppCompatActivity() {
         val botaoCadastrar = binding.activityFormularioCadastroBotaoCadastrar
         botaoCadastrar.setOnClickListener {
             val novoUsuario = criaUsuario()
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO){
-                    try {
-                        dao.salva(novoUsuario)
-                        finish()
-                    }catch (e : Exception){
-                        Log.e("BotaoCadastrarUsuario", "configuraBotaoCadastrar: $e", )
-                        Toast.makeText(this@FormularioCadastroUsuarioActivity, "Falha ao cadastrar usuario", Toast.LENGTH_SHORT).show()
-                    }
+            cadastraUsuario(novoUsuario)
+        }
+    }
+
+    private fun cadastraUsuario(novoUsuario: Usuario) {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    dao.salva(novoUsuario)
+                    finish()
+                } catch (e: Exception) {
+                    Log.e("BotaoCadastrarUsuario", "configuraBotaoCadastrar: $e")
+                    toast("Falha ao cadastrar usuario")
                 }
             }
         }
